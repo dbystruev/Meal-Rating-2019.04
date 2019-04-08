@@ -29,6 +29,7 @@ class ListViewController: UIViewController {
     
     func setupUI() {
         tableView.dataSource = self
+        tableView.delegate = self
     }
 }
 
@@ -50,11 +51,35 @@ extension ListViewController: UITableViewDataSource {
     }
 }
 
+// MARK: - UITableViewDelegate
+extension ListViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print(#line, #function)
+    }
+}
+
 // MARK: - Custom Methods
 extension ListViewController {
     func configure(cell: UITableViewCell, with meal: Meal) {
         cell.imageView?.image = meal.photo
         cell.textLabel?.text = meal.name
         cell.detailTextLabel?.text = meal.stars
+    }
+}
+
+// MARK: - Navigation
+extension ListViewController {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        print(#line, #function)
+        
+        guard segue.identifier == "DetailSegue" else { return }
+        
+        let controller = segue.destination as! DetailViewController
+        
+        guard let indexPath = tableView.indexPathForSelectedRow else { return }
+        
+        controller.meal = meals[indexPath.row]
+        
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 }
